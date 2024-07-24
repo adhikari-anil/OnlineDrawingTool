@@ -12,7 +12,6 @@ const ToolBox = () => {
     activeMenuItem === MENU_ITEMS.ERASER ||
     activeMenuItem === MENU_ITEMS.PENCIL;
   const {color,size} = useSelector((state) => state.toolBox[activeMenuItem]);
-  console.log(" From UseSelector2 : ", color,size);
 
   const updateToolSize = (e) => {
     dispatch(changeToolSize({ item: activeMenuItem, size: e.target.value }));
@@ -20,7 +19,6 @@ const ToolBox = () => {
 
   const updateColor = (newColor) => {
     dispatch(changeColor({ item: activeMenuItem, color: newColor }));
-    console.log(" After Dispatching :: ", activeMenuItem, newColor);
   };
   return (
     <div className={styles.toolBoxContainer}>

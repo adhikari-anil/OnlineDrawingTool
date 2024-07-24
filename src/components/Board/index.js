@@ -6,15 +6,13 @@ const Board = () => {
   const shouldDraw = useRef(false);
   const activeMenuItem = useSelector((state)=>state.menu.activeMenuItem);
   const {color, size} = useSelector((state) => state.toolBox[activeMenuItem]);
-  console.log("From Board: ",size);
-
+  
   useEffect(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
 
     const changeConfig = (color, size) => {
-      console.log(color,size);
       context.strokeStyle = color;
       context.lineWidth = size;
     };

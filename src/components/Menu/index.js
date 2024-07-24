@@ -17,7 +17,6 @@ import { MENU_ITEMS } from "@/constant";
 const Menu = () => {
   const dispatch = useDispatch(); 
   const activeMenuItem = useSelector((state)=>state.menu.activeMenuItem); 
-  // console.log(activeMenuItem);
   const handleMenuClick =(itemName)=>{
     dispatch(menuItemClick(itemName));
   }
