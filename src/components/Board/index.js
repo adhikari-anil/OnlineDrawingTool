@@ -1,12 +1,31 @@
-import { useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { MENU_ITEMS } from "@/constant";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { menuItemClick, actionItemClick } from "@/slice/menuSlice";
 
 const Board = () => {
+  const dispatch = useDispatch();
   const canvasRef = useRef(null);
   const shouldDraw = useRef(false);
-  const activeMenuItem = useSelector((state)=>state.menu.activeMenuItem);
+  const {activeMenuItem, actionMenuItem} = useSelector((state)=>state.menu);
   const {color, size} = useSelector((state) => state.toolBox[activeMenuItem]);
   
+  useEffect(()=>{
+    if (!canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+
+    if(actionMenuItem === MENU_ITEMS.DOWNLOAD){
+      const URL = canvas.toDataURL();
+      const anchor = document.createElement("a");
+      anchor.href =URL
+      anchor.download = 'sketch.jpg'
+      anchor.click()
+      console.log(URL);
+    }
+    dispatch(actionItemClick(null))
+  },[actionMenuItem])
+
   useEffect(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -20,7 +39,7 @@ const Board = () => {
     changeConfig(color,size);
   },[color,size]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
@@ -29,16 +48,24 @@ const Board = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    const beginPath=(x,y)=>{
+      context.beginPath()
+      context.moveTo(x,y)
+    }
+
+    const drawLine = (x,y)=>{
+      context.lineTo(x,y)
+      context.stroke()
+    }
+
     const handleMouseDown = (e)=>{
         shouldDraw.current = true
-        context.beginPath()
-        context.moveTo(e.clientX, e.clientY);
+        beginPath(e.clientX, e.clientY);
     }
 
     const handleMouseMove = (e)=>{
         if(!shouldDraw.current) return
-        context.lineTo(e.clientX, e.clientY)
-        context.stroke()
+        drawLine(e.clientX, e.clientY)
     }
 
     const handleMouseUp = (e)=>{
