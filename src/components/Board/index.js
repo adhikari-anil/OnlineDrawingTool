@@ -74,12 +74,16 @@ const Board = () => {
 
     const handleTouchStart = (e) => {
       shouldDraw.current = true;
-      beginPath(e.clientX, e.clientY);
+      const touch = e.touches[0];
+      beginPath(touch.clientX, touch.clientY);
+      e.preventDefault(); // Prevent scrolling
     };
 
     const handleTouchMove = (e) => {
       if (!shouldDraw.current) return;
-      drawLine(e.clientX, e.clientY);
+      const touch = e.touches[0];
+      drawLine(touch.clientX, touch.clientY);
+      e.preventDefault(); // Prevent scrolling
     };
 
     const handleTouchUp = (e) => {
