@@ -6,6 +6,8 @@ import { menuItemClick, actionItemClick } from "@/slice/menuSlice";
 const Board = () => {
   const dispatch = useDispatch();
   const canvasRef = useRef(null);
+  const drawingHistory = useRef([]);
+  const historyPointer = useRef(0);
   const shouldDraw = useRef(false);
   const { activeMenuItem, actionMenuItem } = useSelector((state) => state.menu);
   const { color, size } = useSelector((state) => state.toolBox[activeMenuItem]);
@@ -22,6 +24,11 @@ const Board = () => {
       anchor.download = "sketch.jpg";
       anchor.click();
       console.log(URL);
+    }else if(actionMenuItem === MENU_ITEMS.UNDO || actionMenuItem === MENU_ITEMS.REDO) {
+      if(historyPointer.current >0 && actionMenuItem === MENU_ITEMS.UNDO) historyPointer.current -=1
+      if(historyPointer.current < drawingHistory.current.length-1 && actionMenuItem === MENU_ITEMS.REDO) historyPointer.current +=1
+      const imageData = drawingHistory.current[historyPointer.current];
+      context.putImageData(imageData,0,0);
     }
     dispatch(actionItemClick(null));
   }, [actionMenuItem]);
@@ -70,6 +77,9 @@ const Board = () => {
 
     const handleMouseUp = (e) => {
       shouldDraw.current = false;
+      const imageData = context.getImageData(0,0,canvas.width,canvas.height);
+      drawingHistory.current.push(imageData);
+      historyPointer.current = drawingHistory.current.length-1;
     };
 
     const handleTouchStart = (e) => {
